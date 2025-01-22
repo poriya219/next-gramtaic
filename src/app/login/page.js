@@ -19,7 +19,8 @@ const LoginPage = () => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        try{
+          e.preventDefault();
     
         const result = await signIn('credentials', {
           redirect: false,
@@ -28,16 +29,21 @@ const LoginPage = () => {
         });
     
         if (result.error) {
-          console.log('Error');
+          console.log(`Error: ${result.error}`);
           
         } else {
           window.location.href = '/'; // Redirect to the homepage or dashboard
+        }
+        }
+        catch(e){
+          console.log(`catch called: ${e}`);
+          
         }
       };
     
 
     return (
-        <div className="p-10">
+        <div className="p-10 min-h-screen">
             
             <h1 className="flex flex-wrap font-bold text-start text-4xl">
             <span className="block text-[#84c4eb]">Gramatic</span>
