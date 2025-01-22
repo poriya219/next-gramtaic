@@ -14,6 +14,7 @@ import {
 } from "@heroui/navbar";
 
 import {Link} from "@heroui/link";
+import { signOut } from "next-auth/react";
 // import {Button, ButtonGroup} from "@heroui/button";
 import Image from "next/image";
 import {Avatar, AvatarGroup, AvatarIcon} from "@heroui/avatar";
@@ -22,15 +23,18 @@ import AxiosInstance from "@/utils/axiosInstance";
 
 export default function PanelNavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [email, setEmail] = useState("Loading...");
   const [user, setUser] = useState(null);
 
   const fetchData = async () => {
     try {
-      const response = await AxiosInstance.get('https://gramatic.ir/api/user/info');
+      const response = await AxiosInstance.get('/api/info/user');
   console.log('user:', response.data);
 
+  setEmail(response.data.email)
       setUser(response.data); // Save data to state
     } catch (err) {
+        setEmail('Error loading email')
       setUser(null); // Handle errors
     } finally {
       // setLoading(false); // Set loading to false
@@ -38,8 +42,9 @@ export default function PanelNavBar() {
   };
 
   useEffect(() => {
-    console.log('inside the useEffect');
-    fetchData();
+    if(user === null){
+        fetchData();
+    }
   }); 
 
   const menuItems = [
@@ -91,7 +96,7 @@ export default function PanelNavBar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent as="div" justify="end">
-        <Dropdown placement="bottom-end">
+        <Dropdown placement="bottom-end" className="bg-black">
           <DropdownTrigger>
             <Avatar
               isBordered
@@ -103,18 +108,13 @@ export default function PanelNavBar() {
               src={user?.image || "/images/logo.png"}
             />
           </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
+          <DropdownMenu className="bg-black m-0" aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
+              <p className="font-semibold">{email}</p>
             </DropdownItem>
-            <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="team_settings">Team Settings</DropdownItem>
-            <DropdownItem key="analytics">Analytics</DropdownItem>
-            <DropdownItem key="system">System</DropdownItem>
-            <DropdownItem key="configurations">Configurations</DropdownItem>
-            <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-            <DropdownItem key="logout" color="danger">
+            <DropdownItem key="settings" href="">Settings</DropdownItem>
+            <DropdownItem key="logout" color="danger" onPress={()=> signOut({callbackUrl: "/"})}>
               Log Out
             </DropdownItem>
           </DropdownMenu>

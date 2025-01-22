@@ -12,7 +12,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         // Replace with your API call
-        const response = await AxiosInstance.post('/auth/signin',{
+        const response = await AxiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin`,{
           email: credentials.email,
           password: credentials.password,
         })
@@ -37,6 +37,7 @@ const handler = NextAuth({
 //   },
   callbacks: {
     async jwt({ token, user }) {
+
         if (user?.token) {
           token.accessToken = user.token;
         }
@@ -46,6 +47,7 @@ const handler = NextAuth({
       },
       async session({ session, token }) {
         session.accessToken = token.accessToken;
+        console.log(`s token: ${token}`);
         
         return session;
       },
