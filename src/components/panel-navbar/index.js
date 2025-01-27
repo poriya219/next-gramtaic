@@ -20,8 +20,10 @@ import Image from "next/image";
 import {Avatar, AvatarGroup, AvatarIcon} from "@heroui/avatar";
 import { Dropdown,  DropdownTrigger,  DropdownMenu,  DropdownItem} from "@heroui/dropdown";
 import AxiosInstance from "@/utils/axiosInstance";
+import { useRouter } from 'next/navigation'; // or your preferred routing library
 
 export default function PanelNavBar() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [email, setEmail] = useState("Loading...");
   const [user, setUser] = useState(null);
@@ -29,7 +31,6 @@ export default function PanelNavBar() {
   const fetchData = async () => {
     try {
       const response = await AxiosInstance.get('/api/info/user');
-  console.log('user:', response.data);
 
   setEmail(response.data.email)
       setUser(response.data); // Save data to state
@@ -48,16 +49,10 @@ export default function PanelNavBar() {
   }); 
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    "History",
+    "New post",
+    "Smart direct",
+    "Smart comment",
   ];
 
   return (
@@ -80,18 +75,23 @@ export default function PanelNavBar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarItem isActive>
-          <Link color="" href="#">
-            Features
+          <Link color="" className="text-[#84c4eb]" href="/panel/history">
+            History
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link aria-current="page" href="#">
-            Customers
+          <Link aria-current="page" className="text-[#84c4eb]" href="/panel/new">
+            New post
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="" href="#">
-            Integrations
+          <Link color="" className="text-[#84c4eb]" href="/panel/direct">
+            Smart direct
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="" className="text-[#84c4eb]" href="/panel/comment">
+            Smart comment
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -108,27 +108,31 @@ export default function PanelNavBar() {
               src={user?.image || "/images/logo.png"}
             />
           </DropdownTrigger>
-          <DropdownMenu className="bg-black m-0" aria-label="Profile Actions" variant="flat">
+          <DropdownMenu className="bg-black m-0" aria-label="Profile Actions" variant="flat" onAction={(key) => {
+    if (key === 'settings') {
+      router.push('/panel/settings');
+    }
+  }}>
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">{email}</p>
             </DropdownItem>
-            <DropdownItem key="settings" href="">Settings</DropdownItem>
+            <DropdownItem key="settings" href="/panel/settings">Settings</DropdownItem>
             <DropdownItem key="logout" color="danger" onPress={()=> signOut({callbackUrl: "/"})}>
               Log Out
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
-      <NavbarMenu>
+      <NavbarMenu className="bg-black">
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
               className="w-full"
-              color={
-                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
+              color="primary"
+              href={
+                index === 0 ? "/panel/history" : index === 1 ? "/panel/new" : index == 2 ? "/panel/direct" : index == 3 ? "/panel/comment" : ""
               }
-              href="#"
               size="lg"
             >
               {item}

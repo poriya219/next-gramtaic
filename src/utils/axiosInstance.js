@@ -13,13 +13,13 @@ AxiosInstance.interceptors.request.use(
         // const accessToken = JSON.parse(token);
 
         const secret = process.env.NEXT_PUBLIC_AUTH_SECRET;
-console.log('before session');
+// console.log('before session');
 
         const session = await getSession(); // Retrieve the session
-        console.log('session:', session);
+        // console.log('session:', session);
         
     if (session?.accessToken) {
-    console.log('add token', session.accessToken);
+    // console.log('add token', session.accessToken);
     
       config.headers["User"] = `Bearer ${session.accessToken}`; // Add the token to headers
     }

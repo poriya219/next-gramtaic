@@ -11,6 +11,7 @@ const handler = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        
         // Replace with your API call
         const response = await AxiosInstance.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin`,{
           email: credentials.email,
@@ -32,27 +33,25 @@ const handler = NextAuth({
       },
     }),
   ],
-//   session: {
-//     strategy: 'jwt',
-//   },
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
     async jwt({ token, user }) {
 
         if (user?.token) {
-          token.accessToken = user.token;
+          token.accessToken = user.token;      
         }
-        console.log("JWT Callback - Updated Token:", token);
         
         return token;
       },
       async session({ session, token }) {
         session.accessToken = token.accessToken;
-        console.log(`s token: ${token}`);
-        
+        // console.log('session:', session);
         return session;
       },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

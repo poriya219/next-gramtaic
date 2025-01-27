@@ -32,7 +32,7 @@ const LoginPage = () => {
           console.log(`Error: ${result.error}`);
           
         } else {
-          window.location.href = '/panel/home'; // Redirect to the homepage or dashboard
+          window.location.href = '/panel/history'; // Redirect to the homepage or dashboard
         }
         }
         catch(e){
